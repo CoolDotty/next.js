@@ -594,6 +594,59 @@ describe('app-custom-routes', () => {
     })
   })
 
+  describe('WebDAV/CalDAV methods', () => {
+    describe.each([
+      'MKCOL',
+      'COPY',
+      'MOVE',
+      'LOCK',
+      'UNLOCK',
+      'PROPFIND',
+      'PROPPATCH',
+      'REPORT',
+      'MKCALENDAR',
+    ])('made via a %s request', (method) => {
+      it('responds correctly on /webdav/endpoint', async () => {
+        const res = await next.fetch(basePath + '/webdav/endpoint', { method })
+
+        expect(res.status).toEqual(200)
+        expect(await res.text()).toContain('webdav response')
+
+        const meta = getRequestMeta(res.headers)
+        expect(meta.method).toEqual(method)
+      })
+    })
+
+    it('returns 405 for non-implemented WebDAV methods', async () => {
+      const res = await next.fetch(basePath + '/basic/endpoint', {
+        method: 'PROPFIND',
+      })
+
+      expect(res.status).toEqual(405)
+    })
+
+    it('can handle XML body in PROPFIND request', async () => {
+      const xmlBody = `<?xml version="1.0" encoding="utf-8"?>
+<D:propfind xmlns:D="DAV:">
+  <D:prop>
+    <D:displayname/>
+  </D:prop>
+</D:propfind>`
+
+      const res = await next.fetch(basePath + '/webdav/endpoint', {
+        method: 'PROPFIND',
+        body: xmlBody,
+        headers: {
+          'Content-Type': 'application/xml',
+        },
+      })
+
+      expect(res.status).toEqual(200)
+      const meta = getRequestMeta(res.headers)
+      expect(meta.hasBody).toEqual(true)
+    })
+  })
+
   describe('edge functions', () => {
     it('returns response using edge runtime', async () => {
       const res = await next.fetch(basePath + '/edge')

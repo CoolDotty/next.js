@@ -863,7 +863,18 @@ export function hasNonStaticMethods(handlers: AppRouteHandlers): boolean {
     handlers.PUT ||
     handlers.DELETE ||
     handlers.PATCH ||
-    handlers.OPTIONS
+    handlers.OPTIONS ||
+    // WebDAV methods (RFC 4918)
+    handlers.MKCOL ||
+    handlers.COPY ||
+    handlers.MOVE ||
+    handlers.LOCK ||
+    handlers.UNLOCK ||
+    handlers.PROPFIND ||
+    handlers.PROPPATCH ||
+    // CalDAV/CardDAV methods (RFC 4791, RFC 6352)
+    handlers.REPORT ||
+    handlers.MKCALENDAR
   ) {
     return true
   }

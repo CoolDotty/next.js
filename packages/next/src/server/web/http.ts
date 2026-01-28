@@ -10,6 +10,17 @@ export const HTTP_METHODS = [
   'PUT',
   'DELETE',
   'PATCH',
+  // WebDAV methods (RFC 4918)
+  'MKCOL',
+  'COPY',
+  'MOVE',
+  'LOCK',
+  'UNLOCK',
+  'PROPFIND',
+  'PROPPATCH',
+  // CalDAV/CardDAV methods (RFC 4791, RFC 6352)
+  'REPORT',
+  'MKCALENDAR',
 ] as const
 
 /**
